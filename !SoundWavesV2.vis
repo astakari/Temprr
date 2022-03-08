@@ -1,0 +1,27 @@
+CreateOption("Bass", 30)
+CreateOption("Bounce", 0.8)
+CreateOption("Spread", 6)
+CreateOption("Speed", 1)
+
+local Samples = {}
+local Spin = 0
+
+for K, V in next, Visualizer do
+    coroutine.wrap(
+        function()
+            repeat
+                if K == 1 then
+                    Samples[#Samples + 1] = CurrentSound.PlaybackLoudness * Bounce
+                end
+
+                local Offset = ToVolume((Samples[#Samples - K] or Samples[1]) / 3, Bass, 0)
+                local CirclePosition2 = math.rad(Spin + (K * (360 / #Visualizer)))
+                V.CFrame =
+                    Root.CFrame * CFrame.Angles(0, CirclePosition2, 0) * CFrame.new(Spread, -5.25 + Offset, 0) *
+                    CFrame.Angles(math.rad(90), math.rad(90), math.rad(0))
+                wait(0.001)
+                Spin = Spin + Speed / 50
+            until Stopped
+        end
+    )()
+end
